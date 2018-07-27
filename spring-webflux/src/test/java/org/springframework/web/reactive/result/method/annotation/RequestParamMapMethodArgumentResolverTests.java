@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2017 the original author or authors.
+ * Copyright 2002-2018 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -46,7 +46,7 @@ import static org.springframework.web.method.MvcAnnotationPredicates.requestPara
 public class RequestParamMapMethodArgumentResolverTests {
 
 	private final RequestParamMapMethodArgumentResolver resolver =
-			new RequestParamMapMethodArgumentResolver(new ReactiveAdapterRegistry());
+			new RequestParamMapMethodArgumentResolver(ReactiveAdapterRegistry.getSharedInstance());
 
 	private ResolvableMethod testMethod = ResolvableMethod.on(getClass()).named("handle").build();
 
@@ -80,8 +80,7 @@ public class RequestParamMapMethodArgumentResolverTests {
 	@Test
 	public void resolveMapArgumentWithQueryString() throws Exception {
 		MethodParameter param = this.testMethod.annot(requestParam().name("")).arg(Map.class);
-		MockServerHttpRequest request = MockServerHttpRequest.get("/path?foo=bar").build();
-		Object result= resolve(param, MockServerWebExchange.from(request));
+		Object result= resolve(param, MockServerWebExchange.from(MockServerHttpRequest.get("/path?foo=bar")));
 		assertTrue(result instanceof Map);
 		assertEquals(Collections.singletonMap("foo", "bar"), result);
 	}
@@ -89,8 +88,7 @@ public class RequestParamMapMethodArgumentResolverTests {
 	@Test
 	public void resolveMultiValueMapArgument() throws Exception {
 		MethodParameter param = this.testMethod.annotPresent(RequestParam.class).arg(MultiValueMap.class);
-		MockServerHttpRequest request = MockServerHttpRequest.get("/path?foo=bar&foo=baz").build();
-		ServerWebExchange exchange = MockServerWebExchange.from(request);
+		ServerWebExchange exchange = MockServerWebExchange.from(MockServerHttpRequest.get("/path?foo=bar&foo=baz"));
 		Object result= resolve(param, exchange);
 
 		assertTrue(result instanceof MultiValueMap);

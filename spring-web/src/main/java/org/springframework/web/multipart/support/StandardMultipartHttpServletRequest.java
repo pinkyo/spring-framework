@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2017 the original author or authors.
+ * Copyright 2002-2018 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,6 +22,7 @@ import java.io.InputStream;
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -52,6 +53,7 @@ import org.springframework.web.multipart.MultipartFile;
  * @author Juergen Hoeller
  * @author Rossen Stoyanchev
  * @since 3.1
+ * @see StandardServletMultipartResolver
  */
 public class StandardMultipartHttpServletRequest extends AbstractMultipartHttpServletRequest {
 
@@ -75,8 +77,11 @@ public class StandardMultipartHttpServletRequest extends AbstractMultipartHttpSe
 	 * @param lazyParsing whether multipart parsing should be triggered lazily on
 	 * first access of multipart files or parameters
 	 * @throws MultipartException if an immediate parsing attempt failed
+	 * @since 3.2.9
 	 */
-	public StandardMultipartHttpServletRequest(HttpServletRequest request, boolean lazyParsing) throws MultipartException {
+	public StandardMultipartHttpServletRequest(HttpServletRequest request, boolean lazyParsing)
+			throws MultipartException {
+
 		super(request);
 		if (!lazyParsing) {
 			parseRequest(request);
@@ -258,6 +263,11 @@ public class StandardMultipartHttpServletRequest extends AbstractMultipartHttpSe
 				// we can manually copy it to the requested location as a fallback.
 				FileCopyUtils.copy(this.part.getInputStream(), Files.newOutputStream(dest.toPath()));
 			}
+		}
+
+		@Override
+		public void transferTo(Path dest) throws IOException, IllegalStateException {
+			FileCopyUtils.copy(this.part.getInputStream(), Files.newOutputStream(dest));
 		}
 	}
 

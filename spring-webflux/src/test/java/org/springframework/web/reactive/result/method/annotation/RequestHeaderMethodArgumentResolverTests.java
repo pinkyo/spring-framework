@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2017 the original author or authors.
+ * Copyright 2002-2018 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -70,10 +70,11 @@ public class RequestHeaderMethodArgumentResolverTests {
 
 
 	@Before
+	@SuppressWarnings("resource")
 	public void setup() throws Exception {
 		AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext();
 		context.refresh();
-		ReactiveAdapterRegistry adapterRegistry = new ReactiveAdapterRegistry();
+		ReactiveAdapterRegistry adapterRegistry = ReactiveAdapterRegistry.getSharedInstance();
 		this.resolver = new RequestHeaderMethodArgumentResolver(context.getBeanFactory(), adapterRegistry);
 
 		ConfigurableWebBindingInitializer initializer = new ConfigurableWebBindingInitializer();
@@ -112,7 +113,7 @@ public class RequestHeaderMethodArgumentResolverTests {
 	@Test
 	public void resolveStringArgument() throws Exception {
 		String expected = "foo";
-		ServerWebExchange exchange = MockServerWebExchange.from(MockServerHttpRequest.get("/").header("name", expected).build());
+		ServerWebExchange exchange = MockServerWebExchange.from(MockServerHttpRequest.get("/").header("name", expected));
 
 		Mono<Object> mono = this.resolver.resolveArgument(
 				this.paramNamedDefaultValueStringHeader, this.bindingContext, exchange);
@@ -137,7 +138,7 @@ public class RequestHeaderMethodArgumentResolverTests {
 
 	@Test
 	public void resolveDefaultValue() throws Exception {
-		MockServerWebExchange exchange = MockServerWebExchange.from(MockServerHttpRequest.get("/").build());
+		MockServerWebExchange exchange = MockServerWebExchange.from(MockServerHttpRequest.get("/"));
 		Mono<Object> mono = this.resolver.resolveArgument(
 				this.paramNamedDefaultValueStringHeader, this.bindingContext, exchange);
 
@@ -152,7 +153,7 @@ public class RequestHeaderMethodArgumentResolverTests {
 		try {
 			Mono<Object> mono = this.resolver.resolveArgument(
 					this.paramSystemProperty, this.bindingContext,
-					MockServerWebExchange.from(MockServerHttpRequest.get("/").build()));
+					MockServerWebExchange.from(MockServerHttpRequest.get("/")));
 
 			Object result = mono.block();
 			assertTrue(result instanceof String);
@@ -207,7 +208,7 @@ public class RequestHeaderMethodArgumentResolverTests {
 	public void notFound() throws Exception {
 		Mono<Object> mono = resolver.resolveArgument(
 				this.paramNamedValueStringArray, this.bindingContext,
-				MockServerWebExchange.from(MockServerHttpRequest.get("/").build()));
+				MockServerWebExchange.from(MockServerHttpRequest.get("/")));
 
 		StepVerifier.create(mono)
 				.expectNextCount(0)

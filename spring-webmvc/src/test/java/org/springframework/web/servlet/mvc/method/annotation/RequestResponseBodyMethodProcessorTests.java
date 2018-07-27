@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2017 the original author or authors.
+ * Copyright 2002-2018 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -268,8 +268,8 @@ public class RequestResponseBodyMethodProcessorTests {
 		this.servletRequest.setContentType(MediaType.APPLICATION_JSON_VALUE);
 
 		List<HttpMessageConverter<?>> converters = new ArrayList<>();
-		HttpMessageConverter target = new MappingJackson2HttpMessageConverter();
-		HttpMessageConverter proxy = ProxyFactory.getProxy(HttpMessageConverter.class, new SingletonTargetSource(target));
+		HttpMessageConverter<Object> target = new MappingJackson2HttpMessageConverter();
+		HttpMessageConverter<?> proxy = ProxyFactory.getProxy(HttpMessageConverter.class, new SingletonTargetSource(target));
 		converters.add(proxy);
 		RequestResponseBodyMethodProcessor processor = new RequestResponseBodyMethodProcessor(converters);
 
@@ -560,7 +560,10 @@ public class RequestResponseBodyMethodProcessorTests {
 
 	@Test  // SPR-12501
 	public void resolveArgumentWithJacksonJsonViewAndXmlMessageConverter() throws Exception {
-		String content = "<root><withView1>with</withView1><withView2>with</withView2><withoutView>without</withoutView></root>";
+		String content = "<root>" +
+				"<withView1>with</withView1>" +
+				"<withView2>with</withView2>" +
+				"<withoutView>without</withoutView></root>";
 		this.servletRequest.setContent(content.getBytes("UTF-8"));
 		this.servletRequest.setContentType(MediaType.APPLICATION_XML_VALUE);
 
@@ -586,7 +589,10 @@ public class RequestResponseBodyMethodProcessorTests {
 
 	@Test  // SPR-12501
 	public void resolveHttpEntityArgumentWithJacksonJsonViewAndXmlMessageConverter() throws Exception {
-		String content = "<root><withView1>with</withView1><withView2>with</withView2><withoutView>without</withoutView></root>";
+		String content = "<root>" +
+				"<withView1>with</withView1>" +
+				"<withView2>with</withView2>" +
+				"<withoutView>without</withoutView></root>";
 		this.servletRequest.setContent(content.getBytes("UTF-8"));
 		this.servletRequest.setContentType(MediaType.APPLICATION_XML_VALUE);
 
@@ -926,7 +932,20 @@ public class RequestResponseBodyMethodProcessorTests {
 	}
 
 
-	private static class JacksonController {
+	private static class BaseController<T> {
+
+		@RequestMapping
+		@ResponseBody
+		public List<T> handleTypeInfoList() {
+			List<T> list = new ArrayList<>();
+			list.add((T) new Foo("foo"));
+			list.add((T) new Bar("bar"));
+			return list;
+		}
+	}
+
+
+	private static class JacksonController extends BaseController<ParentClass> {
 
 		@RequestMapping
 		@ResponseBody
@@ -961,15 +980,6 @@ public class RequestResponseBodyMethodProcessorTests {
 		@ResponseBody
 		public JacksonViewBean handleHttpEntity(@JsonView(MyJacksonView1.class) HttpEntity<JacksonViewBean> entity) {
 			return entity.getBody();
-		}
-
-		@RequestMapping
-		@ResponseBody
-		public List<ParentClass> handleTypeInfoList() {
-			List<ParentClass> list = new ArrayList<>();
-			list.add(new Foo("foo"));
-			list.add(new Bar("bar"));
-			return list;
 		}
 
 		@RequestMapping

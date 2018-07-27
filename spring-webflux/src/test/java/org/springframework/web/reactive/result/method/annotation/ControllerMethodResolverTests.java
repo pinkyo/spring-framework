@@ -76,7 +76,7 @@ public class ControllerMethodResolverTests {
 		applicationContext.refresh();
 
 		this.methodResolver = new ControllerMethodResolver(
-				resolvers, codecs.getReaders(), new ReactiveAdapterRegistry(), applicationContext);
+				resolvers, ReactiveAdapterRegistry.getSharedInstance(), applicationContext, codecs.getReaders());
 
 		Method method = ResolvableMethod.on(TestController.class).mockCall(TestController::handle).method();
 		this.handlerMethod = new HandlerMethod(new TestController(), method);
@@ -94,6 +94,8 @@ public class ControllerMethodResolverTests {
 		assertEquals(RequestParamMapMethodArgumentResolver.class, next(resolvers, index).getClass());
 		assertEquals(PathVariableMethodArgumentResolver.class, next(resolvers, index).getClass());
 		assertEquals(PathVariableMapMethodArgumentResolver.class, next(resolvers, index).getClass());
+		assertEquals(MatrixVariableMethodArgumentResolver.class, next(resolvers, index).getClass());
+		assertEquals(MatrixVariableMapMethodArgumentResolver.class, next(resolvers, index).getClass());
 		assertEquals(RequestBodyArgumentResolver.class, next(resolvers, index).getClass());
 		assertEquals(RequestPartMethodArgumentResolver.class, next(resolvers, index).getClass());
 		assertEquals(ModelAttributeMethodArgumentResolver.class, next(resolvers, index).getClass());
@@ -134,6 +136,8 @@ public class ControllerMethodResolverTests {
 		assertEquals(RequestParamMapMethodArgumentResolver.class, next(resolvers, index).getClass());
 		assertEquals(PathVariableMethodArgumentResolver.class, next(resolvers, index).getClass());
 		assertEquals(PathVariableMapMethodArgumentResolver.class, next(resolvers, index).getClass());
+		assertEquals(MatrixVariableMethodArgumentResolver.class, next(resolvers, index).getClass());
+		assertEquals(MatrixVariableMapMethodArgumentResolver.class, next(resolvers, index).getClass());
 		assertEquals(ModelAttributeMethodArgumentResolver.class, next(resolvers, index).getClass());
 		assertEquals(RequestHeaderMethodArgumentResolver.class, next(resolvers, index).getClass());
 		assertEquals(RequestHeaderMapMethodArgumentResolver.class, next(resolvers, index).getClass());
@@ -170,6 +174,8 @@ public class ControllerMethodResolverTests {
 		assertEquals(RequestParamMapMethodArgumentResolver.class, next(resolvers, index).getClass());
 		assertEquals(PathVariableMethodArgumentResolver.class, next(resolvers, index).getClass());
 		assertEquals(PathVariableMapMethodArgumentResolver.class, next(resolvers, index).getClass());
+		assertEquals(MatrixVariableMethodArgumentResolver.class, next(resolvers, index).getClass());
+		assertEquals(MatrixVariableMapMethodArgumentResolver.class, next(resolvers, index).getClass());
 		assertEquals(RequestHeaderMethodArgumentResolver.class, next(resolvers, index).getClass());
 		assertEquals(RequestHeaderMapMethodArgumentResolver.class, next(resolvers, index).getClass());
 		assertEquals(CookieValueMethodArgumentResolver.class, next(resolvers, index).getClass());
@@ -200,6 +206,8 @@ public class ControllerMethodResolverTests {
 		assertEquals(RequestParamMapMethodArgumentResolver.class, next(resolvers, index).getClass());
 		assertEquals(PathVariableMethodArgumentResolver.class, next(resolvers, index).getClass());
 		assertEquals(PathVariableMapMethodArgumentResolver.class, next(resolvers, index).getClass());
+		assertEquals(MatrixVariableMethodArgumentResolver.class, next(resolvers, index).getClass());
+		assertEquals(MatrixVariableMapMethodArgumentResolver.class, next(resolvers, index).getClass());
 		assertEquals(RequestHeaderMethodArgumentResolver.class, next(resolvers, index).getClass());
 		assertEquals(RequestHeaderMapMethodArgumentResolver.class, next(resolvers, index).getClass());
 		assertEquals(CookieValueMethodArgumentResolver.class, next(resolvers, index).getClass());
