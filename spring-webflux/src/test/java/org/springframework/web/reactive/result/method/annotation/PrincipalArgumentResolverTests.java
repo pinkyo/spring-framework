@@ -39,7 +39,7 @@ import static org.junit.Assert.assertTrue;
 public class PrincipalArgumentResolverTests {
 
 	private final PrincipalArgumentResolver resolver =
-			new PrincipalArgumentResolver(new ReactiveAdapterRegistry());
+			new PrincipalArgumentResolver(ReactiveAdapterRegistry.getSharedInstance());
 
 	private ResolvableMethod testMethod = ResolvableMethod.on(getClass()).named("handle").build();
 
@@ -57,7 +57,7 @@ public class PrincipalArgumentResolverTests {
 
 		BindingContext context = new BindingContext();
 		Principal user = () -> "Joe";
-		ServerWebExchange exchange = MockServerWebExchange.from(MockServerHttpRequest.get("/").build())
+		ServerWebExchange exchange = MockServerWebExchange.from(MockServerHttpRequest.get("/"))
 				.mutate().principal(Mono.just(user)).build();
 
 		MethodParameter param = this.testMethod.arg(Principal.class);

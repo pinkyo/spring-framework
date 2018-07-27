@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2017 the original author or authors.
+ * Copyright 2002-2018 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -78,6 +78,7 @@ public abstract class SharedEntityManagerCreator {
 		transactionRequiringMethods.add("remove");
 		transactionRequiringMethods.add("refresh");
 
+		queryTerminatingMethods.add("execute");  // JPA 2.1 StoredProcedureQuery
 		queryTerminatingMethods.add("executeUpdate");
 		queryTerminatingMethods.add("getSingleResult");
 		queryTerminatingMethods.add("getResultList");
@@ -126,7 +127,7 @@ public abstract class SharedEntityManagerCreator {
 
 	/**
 	 * Create a transactional EntityManager proxy for the given EntityManagerFactory.
-	 * @param emf EntityManagerFactory to obtain EntityManagers from as needed
+	 * @param emf the EntityManagerFactory to obtain EntityManagers from as needed
 	 * @param properties the properties to be passed into the
 	 * {@code createEntityManager} call (may be {@code null})
 	 * @param entityManagerInterfaces the interfaces to be implemented by the
@@ -141,7 +142,7 @@ public abstract class SharedEntityManagerCreator {
 
 	/**
 	 * Create a transactional EntityManager proxy for the given EntityManagerFactory.
-	 * @param emf EntityManagerFactory to obtain EntityManagers from as needed
+	 * @param emf the EntityManagerFactory to obtain EntityManagers from as needed
 	 * @param properties the properties to be passed into the
 	 * {@code createEntityManager} call (may be {@code null})
 	 * @param synchronizedWithTransaction whether to automatically join ongoing

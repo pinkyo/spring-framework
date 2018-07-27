@@ -48,8 +48,7 @@ public class PathVariableMapMethodArgumentResolverTests {
 
 	private PathVariableMapMethodArgumentResolver resolver;
 
-	private final MockServerWebExchange exchange= MockServerWebExchange.from(
-			MockServerHttpRequest.get("/").build());
+	private final MockServerWebExchange exchange= MockServerWebExchange.from(MockServerHttpRequest.get("/"));
 
 	private MethodParameter paramMap;
 	private MethodParameter paramNamedMap;
@@ -59,7 +58,7 @@ public class PathVariableMapMethodArgumentResolverTests {
 
 	@Before
 	public void setup() throws Exception {
-		this.resolver = new PathVariableMapMethodArgumentResolver(new ReactiveAdapterRegistry());
+		this.resolver = new PathVariableMapMethodArgumentResolver(ReactiveAdapterRegistry.getSharedInstance());
 
 		Method method = ReflectionUtils.findMethod(getClass(), "handle", (Class<?>[]) null);
 		this.paramMap = new MethodParameter(method, 0);

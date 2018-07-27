@@ -45,14 +45,15 @@ public class JRubyScriptTemplateTests {
 		Map<String, Object> model = new HashMap<>();
 		model.put("title", "Layout example");
 		model.put("body", "This is the body");
-		MockServerHttpResponse response = renderViewWithModel("org/springframework/web/reactive/result/view/script/jruby/template.erb", model);
+		String url = "org/springframework/web/reactive/result/view/script/jruby/template.erb";
+		MockServerHttpResponse response = renderViewWithModel(url, model);
 		assertEquals("<html><head><title>Layout example</title></head><body><p>This is the body</p></body></html>",
 				response.getBodyAsString().block());
 	}
 
 	private MockServerHttpResponse renderViewWithModel(String viewUrl, Map<String, Object> model) throws Exception {
 		ScriptTemplateView view = createViewWithUrl(viewUrl);
-		MockServerWebExchange exchange = MockServerWebExchange.from(MockServerHttpRequest.get("/").build());
+		MockServerWebExchange exchange = MockServerWebExchange.from(MockServerHttpRequest.get("/"));
 		view.renderInternal(model, MediaType.TEXT_HTML, exchange).block();
 		return exchange.getResponse();
 	}

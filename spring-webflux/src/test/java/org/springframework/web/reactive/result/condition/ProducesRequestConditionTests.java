@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2016 the original author or authors.
+ * Copyright 2002-2018 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,7 +21,6 @@ import java.util.Collections;
 
 import org.junit.Test;
 
-import org.springframework.mock.http.server.reactive.test.MockServerHttpRequest;
 import org.springframework.mock.web.test.server.MockServerWebExchange;
 import org.springframework.web.server.ServerWebExchange;
 
@@ -41,7 +40,7 @@ public class ProducesRequestConditionTests {
 
 	@Test
 	public void match() throws Exception {
-		MockServerWebExchange exchange = MockServerWebExchange.from(MockServerHttpRequest.get("/").header("Accept", "text/plain").build());
+		MockServerWebExchange exchange = MockServerWebExchange.from(get("/").header("Accept", "text/plain"));
 		ProducesRequestCondition condition = new ProducesRequestCondition("text/plain");
 
 		assertNotNull(condition.getMatchingCondition(exchange));
@@ -49,7 +48,7 @@ public class ProducesRequestConditionTests {
 
 	@Test
 	public void matchNegated() throws Exception {
-		MockServerWebExchange exchange = MockServerWebExchange.from(MockServerHttpRequest.get("/").header("Accept", "text/plain").build());
+		MockServerWebExchange exchange = MockServerWebExchange.from(get("/").header("Accept", "text/plain"));
 		ProducesRequestCondition condition = new ProducesRequestCondition("!text/plain");
 
 		assertNull(condition.getMatchingCondition(exchange));
@@ -63,7 +62,7 @@ public class ProducesRequestConditionTests {
 
 	@Test
 	public void matchWildcard() throws Exception {
-		MockServerWebExchange exchange = MockServerWebExchange.from(MockServerHttpRequest.get("/").header("Accept", "text/plain").build());
+		MockServerWebExchange exchange = MockServerWebExchange.from(get("/").header("Accept", "text/plain"));
 		ProducesRequestCondition condition = new ProducesRequestCondition("text/*");
 
 		assertNotNull(condition.getMatchingCondition(exchange));
@@ -71,7 +70,7 @@ public class ProducesRequestConditionTests {
 
 	@Test
 	public void matchMultiple() throws Exception {
-		MockServerWebExchange exchange = MockServerWebExchange.from(MockServerHttpRequest.get("/").header("Accept", "text/plain").build());
+		MockServerWebExchange exchange = MockServerWebExchange.from(get("/").header("Accept", "text/plain"));
 		ProducesRequestCondition condition = new ProducesRequestCondition("text/plain", "application/xml");
 
 		assertNotNull(condition.getMatchingCondition(exchange));
@@ -79,7 +78,7 @@ public class ProducesRequestConditionTests {
 
 	@Test
 	public void matchSingle() throws Exception {
-		MockServerWebExchange exchange = MockServerWebExchange.from(MockServerHttpRequest.get("/").header("Accept", "application/xml").build());
+		MockServerWebExchange exchange = MockServerWebExchange.from(get("/").header("Accept", "application/xml"));
 		ProducesRequestCondition condition = new ProducesRequestCondition("text/plain");
 
 		assertNull(condition.getMatchingCondition(exchange));
@@ -87,7 +86,7 @@ public class ProducesRequestConditionTests {
 
 	@Test
 	public void matchParseError() throws Exception {
-		MockServerWebExchange exchange = MockServerWebExchange.from(MockServerHttpRequest.get("/").header("Accept", "bogus").build());
+		MockServerWebExchange exchange = MockServerWebExchange.from(get("/").header("Accept", "bogus"));
 		ProducesRequestCondition condition = new ProducesRequestCondition("text/plain");
 
 		assertNull(condition.getMatchingCondition(exchange));
@@ -95,7 +94,7 @@ public class ProducesRequestConditionTests {
 
 	@Test
 	public void matchParseErrorWithNegation() throws Exception {
-		MockServerWebExchange exchange = MockServerWebExchange.from(MockServerHttpRequest.get("/").header("Accept", "bogus").build());
+		MockServerWebExchange exchange = MockServerWebExchange.from(get("/").header("Accept", "bogus"));
 		ProducesRequestCondition condition = new ProducesRequestCondition("!text/plain");
 
 		assertNull(condition.getMatchingCondition(exchange));
@@ -107,7 +106,7 @@ public class ProducesRequestConditionTests {
 		ProducesRequestCondition xml = new ProducesRequestCondition("application/xml");
 		ProducesRequestCondition none = new ProducesRequestCondition();
 
-		MockServerWebExchange exchange = MockServerWebExchange.from(MockServerHttpRequest.get("/").header("Accept", "application/xml, text/html").build());
+		MockServerWebExchange exchange = MockServerWebExchange.from(get("/").header("Accept", "application/xml, text/html"));
 
 		assertTrue(html.compareTo(xml, exchange) > 0);
 		assertTrue(xml.compareTo(html, exchange) < 0);
@@ -117,20 +116,20 @@ public class ProducesRequestConditionTests {
 		assertTrue(none.compareTo(html, exchange) > 0);
 
 		exchange = MockServerWebExchange.from(
-				MockServerHttpRequest.get("/").header("Accept", "application/xml, text/*").build());
+				get("/").header("Accept", "application/xml, text/*"));
 
 		assertTrue(html.compareTo(xml, exchange) > 0);
 		assertTrue(xml.compareTo(html, exchange) < 0);
 
 		exchange = MockServerWebExchange.from(
-				MockServerHttpRequest.get("/").header("Accept", "application/pdf").build());
+				get("/").header("Accept", "application/pdf"));
 
 		assertTrue(html.compareTo(xml, exchange) == 0);
 		assertTrue(xml.compareTo(html, exchange) == 0);
 
 		// See SPR-7000
 		exchange = MockServerWebExchange.from(
-				MockServerHttpRequest.get("/").header("Accept", "text/html;q=0.9,application/xml").build());
+				get("/").header("Accept", "text/html;q=0.9,application/xml"));
 
 		assertTrue(html.compareTo(xml, exchange) > 0);
 		assertTrue(xml.compareTo(html, exchange) < 0);
@@ -138,7 +137,7 @@ public class ProducesRequestConditionTests {
 
 	@Test
 	public void compareToWithSingleExpression() throws Exception {
-		MockServerWebExchange exchange = MockServerWebExchange.from(MockServerHttpRequest.get("/").header("Accept", "text/plain").build());
+		MockServerWebExchange exchange = MockServerWebExchange.from(get("/").header("Accept", "text/plain"));
 
 		ProducesRequestCondition condition1 = new ProducesRequestCondition("text/plain");
 		ProducesRequestCondition condition2 = new ProducesRequestCondition("text/*");
@@ -155,7 +154,7 @@ public class ProducesRequestConditionTests {
 		ProducesRequestCondition condition1 = new ProducesRequestCondition("*/*", "text/plain");
 		ProducesRequestCondition condition2 = new ProducesRequestCondition("text/*", "text/plain;q=0.7");
 
-		MockServerWebExchange exchange = MockServerWebExchange.from(MockServerHttpRequest.get("/").header("Accept", "text/plain").build());
+		MockServerWebExchange exchange = MockServerWebExchange.from(get("/").header("Accept", "text/plain"));
 
 		int result = condition1.compareTo(condition2, exchange);
 		assertTrue("Invalid comparison result: " + result, result < 0);
@@ -170,7 +169,7 @@ public class ProducesRequestConditionTests {
 		ProducesRequestCondition condition2 = new ProducesRequestCondition("application/*", "application/xml");
 
 		ServerWebExchange exchange = MockServerWebExchange.from(
-				get("/").header("Accept", "text/plain", "application/xml").build());
+				get("/").header("Accept", "text/plain", "application/xml"));
 
 		int result = condition1.compareTo(condition2, exchange);
 		assertTrue("Invalid comparison result: " + result, result < 0);
@@ -179,7 +178,7 @@ public class ProducesRequestConditionTests {
 		assertTrue("Invalid comparison result: " + result, result > 0);
 
 		exchange = MockServerWebExchange.from(
-				MockServerHttpRequest.get("/").header("Accept", "application/xml", "text/plain").build());
+				get("/").header("Accept", "application/xml", "text/plain"));
 
 		result = condition1.compareTo(condition2, exchange);
 		assertTrue("Invalid comparison result: " + result, result > 0);
@@ -192,7 +191,7 @@ public class ProducesRequestConditionTests {
 
 	@Test
 	public void compareToMediaTypeAll() throws Exception {
-		MockServerWebExchange exchange = MockServerWebExchange.from(MockServerHttpRequest.get("/").build());
+		MockServerWebExchange exchange = MockServerWebExchange.from(get("/"));
 
 		ProducesRequestCondition condition1 = new ProducesRequestCondition();
 		ProducesRequestCondition condition2 = new ProducesRequestCondition("application/json");
@@ -209,7 +208,7 @@ public class ProducesRequestConditionTests {
 		assertTrue(condition2.compareTo(condition1, exchange) > 0);
 
 		exchange = MockServerWebExchange.from(
-				MockServerHttpRequest.get("/").header("Accept", "*/*").build());
+				get("/").header("Accept", "*/*"));
 
 		condition1 = new ProducesRequestCondition();
 		condition2 = new ProducesRequestCondition("application/json");
@@ -228,7 +227,7 @@ public class ProducesRequestConditionTests {
 
 	@Test
 	public void compareToMediaTypeAllWithParameter() throws Exception {
-		MockServerWebExchange exchange = MockServerWebExchange.from(MockServerHttpRequest.get("/").header("Accept", "*/*;q=0.9").build());
+		MockServerWebExchange exchange = MockServerWebExchange.from(get("/").header("Accept", "*/*;q=0.9"));
 
 		ProducesRequestCondition condition1 = new ProducesRequestCondition();
 		ProducesRequestCondition condition2 = new ProducesRequestCondition("application/json");
@@ -239,7 +238,7 @@ public class ProducesRequestConditionTests {
 
 	@Test
 	public void compareToEqualMatch() throws Exception {
-		MockServerWebExchange exchange = MockServerWebExchange.from(MockServerHttpRequest.get("/").header("Accept", "text/*").build());
+		MockServerWebExchange exchange = MockServerWebExchange.from(get("/").header("Accept", "text/*"));
 
 		ProducesRequestCondition condition1 = new ProducesRequestCondition("text/plain");
 		ProducesRequestCondition condition2 = new ProducesRequestCondition("text/xhtml");
@@ -280,7 +279,7 @@ public class ProducesRequestConditionTests {
 
 	@Test
 	public void getMatchingCondition() throws Exception {
-		MockServerWebExchange exchange = MockServerWebExchange.from(MockServerHttpRequest.get("/").header("Accept", "text/plain").build());
+		MockServerWebExchange exchange = MockServerWebExchange.from(get("/").header("Accept", "text/plain"));
 
 		ProducesRequestCondition condition = new ProducesRequestCondition("text/plain", "application/xml");
 

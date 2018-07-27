@@ -1,9 +1,8 @@
+[[overview]]
+= Spring Framework Overview
 :toc: left
 :toclevels: 1
 :docinfo1:
-
-[[overview]]
-= Spring Framework Overview
 
 Spring makes it easy to create Java enterprise applications. It provides everything you
 need to embrace the Java language in an enterprise environment, with support for Groovy
@@ -20,6 +19,9 @@ or integration workloads) that do not need a server.
 Spring is open source. It has a large and active community that provides continuous feedback
 based on a diverse range of real-world use cases. This has helped Spring to successfully
 evolve over a very long time.
+
+
+
 
 [[overview-spring]]
 == What We Mean by "Spring"
@@ -43,6 +45,9 @@ A note about modules: Spring's framework jars allow for deployment to JDK 9's mo
 ("spring.core", "spring.context" etc) independent from jar artifact names (the jars follow
 the same naming pattern with "-" instead of ".", e.g. "spring-core" and "spring-context").
 Of course, Spring's framework jars keep working fine on the classpath on both JDK 8 and 9.
+
+
+
 
 [[overview-history]]
 == History of Spring and the Spring Framework
@@ -85,6 +90,9 @@ among others. It’s important to remember that each project has its own source 
 issue tracker, and release cadence. See https://spring.io/projects[spring.io/projects] for
 the complete list of Spring projects.
 
+
+
+
 [[overview-philosophy]]
 == Design Philosophy
 
@@ -108,6 +116,9 @@ that are intuitive and that hold up across many versions and many years.
 meaningful, current, and accurate Javadoc. It is one of very few projects that can claim
 clean code structure with  no circular dependencies between packages.
 
+
+
+
 [[overview-feedback]]
 == Feedback and Contributions
 
@@ -121,12 +132,12 @@ https://github.com/spring-projects/spring-framework[Github]. However, please kee
 that, for all but the most trivial issues, we expect a ticket to be filed in the issue
 tracker, where discussions take place and leave a record for future reference.
 
-When contributing, please check out our
-https://github.com/spring-projects/spring-framework/wiki[Wiki on Github]. While this
-reference is versioned and distributed with the Spring Framework, the wiki contains
-information that is not specific to any one version. For example, it has migration
-notes from earlier versions, comprehensive information on what's new across multiple
-versions, contributor guidelines, the Spring Framework code style, and other information.
+For more details see the guidelines at the
+https://github.com/spring-projects/spring-framework/blob/master/CONTRIBUTING.md[CONTRIBUTING],
+top-level project page.
+
+
+
 
 [[overview-getting-started]]
 == Getting Started
